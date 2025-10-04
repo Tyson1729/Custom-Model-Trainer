@@ -31,13 +31,9 @@ else:
     st.header("1. Select Features and Target")
     all_cols = df.columns.tolist()
 
-    # --- ✅ CORRECTED CODE BLOCK STARTS HERE ---
-
-    # Validate and update session state against current dataframe columns
     if 'selected_features' not in st.session_state:
         st.session_state.selected_features = [col for col in all_cols[:-1]]
     else:
-        # Filter out any selected features that are no longer in the dataframe
         st.session_state.selected_features = [f for f in st.session_state.selected_features if f in all_cols]
 
     if 'selected_target' not in st.session_state or st.session_state.selected_target not in all_cols:
@@ -47,7 +43,7 @@ else:
     if st.session_state.selected_target in st.session_state.selected_features:
         st.session_state.selected_features.remove(st.session_state.selected_target)
 
-    # --- WIDGET CREATION ---
+    # Widgets
     
     target_col = st.selectbox(
         "Select Target Column (y):",
@@ -68,7 +64,7 @@ else:
     st.session_state.selected_features = selected_features
     st.session_state.selected_target = target_col
 
-    # --- Validation ---
+    # Validation
     valid_selection = True
     if not selected_features:
         st.error("Please select at least one feature column.")
@@ -83,7 +79,7 @@ else:
     if valid_selection:
         st.success("✅ Feature and target selections are valid.")
         
-        # --- Problem Type Detection ---
+        # Problem Type Detection
         target_dtype = df[target_col].dtype
         unique_values = df[target_col].nunique()
         
@@ -94,7 +90,7 @@ else:
             
         st.info(f"**Detected Problem Type:** {problem_type}")
 
-        # --- Model Selection ---
+        # Model Selection
         st.header("2. Select Models to Train")
         
         if problem_type == "Regression":
@@ -123,7 +119,7 @@ else:
                 if st.checkbox(model_name, value=True):
                     selected_models.append(model_name)
         
-        # --- Training Configuration ---
+        # Training Configuration
         st.header("3. Configure Training")
         col1, col2 = st.columns(2)
         with col1:
@@ -131,7 +127,7 @@ else:
         with col2:
             cv_folds = st.slider("Cross-Validation Folds", 2, 10, 5)
 
-        # --- Start Training ---
+        # Start Training
         if st.button("🚀 Start Model Training", type="primary", use_container_width=True):
             if not selected_models:
                 st.error("Please select at least one model to train.")
@@ -154,10 +150,6 @@ else:
                         # Using one-hot encoding with handle_unknown to avoid errors with unseen categories
                         ('onehot', pd.get_dummies, {'drop_first': True}) 
                     ])
-                    # Note: Using pd.get_dummies is a simplified approach for the pipeline.
-                    # For a more robust solution, sklearn's OneHotEncoder is preferred but more complex to set up here.
-                    
-                    # For simplicity in this script, we'll manually apply encoding for now.
                     X = pd.get_dummies(X, columns=categorical_features.tolist(), drop_first=True)
                     if y.dtype == 'object':
                         le = LabelEncoder()
@@ -199,12 +191,12 @@ else:
                     st.session_state.results_df = pd.DataFrame(results)
                     st.session_state.best_model_obj = best_model
                     st.session_state.best_model_name = best_model_name
-                    st.session_state.scaler = scaler # save scaler for download
+                    st.session_state.scaler = scaler
                     st.session_state.training_cols = X.columns.tolist()
                 
                 st.success("✅ Training completed successfully!")
 
-    # --- Display Results and Download ---
+    # Display Results and Download
     if 'results_df' in st.session_state:
         st.header("4. Model Performance Results")
         st.dataframe(st.session_state.results_df, use_container_width=True)
@@ -213,7 +205,7 @@ else:
         best_name = st.session_state.best_model_name
         st.success(f"The best model is **{best_name}**.")
 
-        # --- Download Model ---
+        # Download Model
         st.subheader("📥 Download the Best Model")
         
         model_filename = f"{best_name.replace(' ', '_').lower()}_model.pkl"
@@ -226,7 +218,6 @@ else:
             'problem_type': problem_type
         }
         
-        # Save the dictionary using joblib
         joblib.dump(model_pack, model_filename)
 
         with open(model_filename, "rb") as file:
@@ -235,6 +226,5 @@ else:
                 data=file,
                 file_name=model_filename,
                 mime="application/octet-stream"
-            )
-        
+            )        
         os.remove(model_filename)
