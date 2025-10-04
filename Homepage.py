@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-# Configure the page
 st.set_page_config(
     page_title="Athena Studio",
     page_icon="🤖",
@@ -9,17 +8,17 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Initialize session state to store data across pages
+# Initialize session state
 if 'df' not in st.session_state:
     st.session_state.df = None
 
 def main():
     st.title("🤖 Welcome to Athena Studio!")
-    st.markdown("### **From Messy CSV to Trained Model, We got you covered.**")
+    st.markdown("### **From Messy Datasets to Trained Model, We got you covered.**")
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.image("https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=800", caption="Built by devs, for devs.", width=400)
+        st.image("https://www.sticckiz.com/cdn/shop/files/Pegatinas_-Sanji.png?v=1745485236&width=416", caption="Built by devs, for devs.", width=400)
 
     st.markdown("""
     <div style="text-align: justify;">
@@ -36,8 +35,7 @@ def main():
     Ready to build? Hit up the <b>Data Uploader</b> page in the sidebar and let's get this thing started!
     </div>
     """, unsafe_allow_html=True)
-
-    # Sidebar Information
+    
     with st.sidebar:
         st.header("About Athena Studio")
         st.markdown("This tool automates the process of data analysis, model training, and performance comparison, allowing you to focus on what matters most: solving problems with data.")
