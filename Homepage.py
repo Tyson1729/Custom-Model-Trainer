@@ -38,7 +38,7 @@ def main():
 
     # Sidebar Information
     with st.sidebar:
-        st.header("About AutoML Studio")
+        st.header("About Athena Studio")
         st.markdown("This tool automates the process of data analysis, model training, and performance comparison, allowing you to focus on what matters most: solving problems with data.")
         st.markdown("---")
         st.markdown("Built by Team Stryden:")
