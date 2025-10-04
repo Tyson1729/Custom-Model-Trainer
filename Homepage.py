@@ -4,7 +4,7 @@ import pandas as pd
 
 # Configure the page
 st.set_page_config(
-    page_title="AutoML Studio",
+    page_title="Athena Studio",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -15,7 +15,7 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 
 def main():
-    st.title("🤖 Welcome to AutoML Studio!")
+    st.title("🤖 Welcome to Athena Studio!")
     st.markdown("### **Automate Your Machine Learning Workflow with Ease**")
     
     st.image("https://images.unsplash.com/photo-1599658880436-c61792e70672?q=80&w=2070", use_column_width=True)
