@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 import google.generativeai as genai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 st.set_page_config(
     page_title="Stryden.ai Assistant",
@@ -8,9 +12,9 @@ st.set_page_config(
     layout="wide"
 )
 
-API_KEY = "AIzaSyDi2FZbMGw9K7I3NpOvNSNt9sZJpzl864I"
+API_KEY = os.getenv("GEMINI_API_KEY")
 
-if API_KEY and API_KEY != "YOUR_API_KEY_HERE":
+if API_KEY:
     try:
         genai.configure(api_key=API_KEY)
     except Exception as e:
