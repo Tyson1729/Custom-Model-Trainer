@@ -15,23 +15,25 @@ if 'df' not in st.session_state:
 
 def main():
     st.title("🤖 Welcome to Athena Studio!")
-    st.markdown("### **Automate Your Machine Learning Workflow with Ease**")
+    st.markdown("### **From Messy CSV to Trained Model, We got you covered.**")
     
-    st.image("https://images.unsplash.com/photo-1599658880436-c61792e70672?q=80&w=2070", use_column_width=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image("https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=800", caption="Built by devs, for devs.", width=400)
 
     st.markdown("""
     <div style="text-align: justify;">
-    Hello and welcome! I'm Stryden, your personal AI assistant designed to simplify the machine learning process. Whether you're a seasoned data scientist or just starting, our studio provides a seamless, intuitive, and powerful platform to transform your raw data into actionable insights.
+    Yo! Welcome to Athena Studio. We're a crew of devs who built this spot just to help you figure out your data without the usual headache. 
     <br><br>
-    Our workflow is broken down into a few simple steps:
+    Tired of wrestling with notebooks just to see what's inside a CSV? We feel you. Our workflow is dead simple:
     <ul>
-        <li><b>Data Uploader:</b> Start by uploading your dataset or choose one of our sample datasets to explore.</li>
-        <li><b>Data Visualization:</b> Dive deep into your data. Understand its structure, visualize relationships between variables, and clean it up by handling any missing values.</li>
-        <li><b>Model Trainer:</b> Select your features and target, choose from a wide range of supervised learning models, and let the studio train them to find the best performer for your specific problem.</li>
+        <li><b>Data Uploader:</b> Drop your dataset or grab one of our samples to play around with. No judgment.</li>
+        <li><b>Data Visualization:</b> Instantly see what's up with your data. Spot trends, find issues, and clean it up on the fly.</li>
+        <li><b>Model Trainer:</b> Don't worry, we got your model training handled. Pick your features, choose a target, and let our custom trainer find the best algorithm for the job.</li>
     </ul>
-    Once the training is complete, you can analyze the performance metrics and download the best-performing model as a file, ready to be deployed in your own applications.
+    Once the training is done, you can predict your outcome, check the scores, and download the best-performing model as a single file, ready to drop into your own project.
     <br><br>
-    Ready to get started? Navigate to the <b>Data Uploader</b> page using the sidebar to begin your journey!
+    Ready to build? Hit up the <b>Data Uploader</b> page in the sidebar and let's get this thing started!
     </div>
     """, unsafe_allow_html=True)
 
