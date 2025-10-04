@@ -41,7 +41,11 @@ def main():
         st.header("About AutoML Studio")
         st.markdown("This tool automates the process of data analysis, model training, and performance comparison, allowing you to focus on what matters most: solving problems with data.")
         st.markdown("---")
-        st.markdown("Built with ❤️ using Streamlit.")
+        st.markdown("Built by Team Stryden:")
+        st.markdown("Tyson")
+        st.markdown("Epsilon")
+        st.markdown("OdiusBull")
+        st.markdown("Deadlock")
 
 if __name__ == "__main__":
     main()
