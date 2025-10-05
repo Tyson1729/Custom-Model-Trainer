@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="Data Visualization", page_icon="🔍", layout="wide")
 st.title("🔍 Data Visualization & Cleaning")
 
 if 'df' not in st.session_state or st.session_state.df is None:

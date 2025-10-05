@@ -20,7 +20,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="Model Trainer", page_icon="⚙️", layout="wide")
 st.title("⚙️ Model Trainer")
 
 if 'df' not in st.session_state or st.session_state.df is None:

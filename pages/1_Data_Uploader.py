@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="Data Uploader", page_icon="📁", layout="wide")
 
 if 'df' not in st.session_state:
     st.session_state.df = None
@@ -71,7 +71,6 @@ if st.session_state.df is not None:
     st.markdown("---")
     st.subheader("Dataset Overview")
 
-    # Display Head and Tail
     col1, col2 = st.columns(2)
     with col1:
         st.write("**Dataset Head:**")
@@ -80,7 +79,6 @@ if st.session_state.df is not None:
         st.write("**Dataset Tail:**")
         st.dataframe(df.tail(), use_container_width=True)
 
-    # Display Shape, Columns, and other info
     st.write("**Dataset Shape:**")
     st.write(f"The dataset has **{df.shape[0]} rows** and **{df.shape[1]} columns**.")
 
