@@ -132,69 +132,64 @@ else:
             if not selected_models:
                 st.error("Please select at least one model to train.")
             else:
-                with st.spinner("Training in progress... Please wait. 🤖"):
-                    # Prepare data
-                    X = df[selected_features]
-                    y = df[target_col]
+                try:
+                    with st.spinner("Training in progress... Please wait. 🤖"):
+                        X = df[selected_features]
+                        y = df[target_col]
 
-                    # Preprocessing pipelines
-                    numeric_features = X.select_dtypes(include=['number']).columns
-                    categorical_features = X.select_dtypes(exclude=['number']).columns
+                        numeric_features = X.select_dtypes(include=['number']).columns
+                        categorical_features = X.select_dtypes(exclude=['number']).columns
 
-                    numeric_transformer = Pipeline(steps=[
-                        ('imputer', SimpleImputer(strategy='median')),
-                        ('scaler', StandardScaler())])
-                    
-                    categorical_transformer = Pipeline(steps=[
-                        ('imputer', SimpleImputer(strategy='most_frequent')),
-                        # Using one-hot encoding with handle_unknown to avoid errors with unseen categories
-                        ('onehot', pd.get_dummies, {'drop_first': True}) 
-                    ])
-                    X = pd.get_dummies(X, columns=categorical_features.tolist(), drop_first=True)
-                    if y.dtype == 'object':
-                        le = LabelEncoder()
-                        y = le.fit_transform(y)
-                    
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-                    
-                    scaler = StandardScaler()
-                    X_train[numeric_features] = scaler.fit_transform(X_train[numeric_features])
-                    X_test[numeric_features] = scaler.transform(X_test[numeric_features])
-
-
-                    results = []
-                    best_model = None
-                    best_score = -np.inf if problem_type == "Classification" else -np.inf
-                    best_model_name = ""
-
-                    for name in selected_models:
-                        model = models[name]
-                        model.fit(X_train, y_train)
-                        y_pred = model.predict(X_test)
+                        # Handle categorical features
+                        X = pd.get_dummies(X, columns=categorical_features.tolist(), drop_first=True)
+                        if y.dtype == 'object':
+                            le = LabelEncoder()
+                            y = le.fit_transform(y)
                         
-                        if problem_type == "Regression":
-                            score = r2_score(y_test, y_pred)
-                            metric = "R2 Score"
-                            if best_model is None or score > best_score:
-                                best_score = score
-                                best_model = model
-                                best_model_name = name
-                        else: # Classification
-                            score = accuracy_score(y_test, y_pred)
-                            metric = "Accuracy"
-                            if best_model is None or score > best_score:
-                                best_score = score
-                                best_model = model
-                                best_model_name = name
-                        results.append({"Model": name, metric: f"{score:.4f}"})
+                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+                        
+                        # Scale numeric features
+                        scaler = StandardScaler()
+                        X_train[numeric_features] = scaler.fit_transform(X_train[numeric_features])
+                        X_test[numeric_features] = scaler.transform(X_test[numeric_features])
 
-                    st.session_state.results_df = pd.DataFrame(results)
-                    st.session_state.best_model_obj = best_model
-                    st.session_state.best_model_name = best_model_name
-                    st.session_state.scaler = scaler
-                    st.session_state.training_cols = X.columns.tolist()
-                
-                st.success("✅ Training completed successfully!")
+                        results = []
+                        best_model = None
+                        best_score = -np.inf
+                        best_model_name = ""
+
+                        for name in selected_models:
+                            model = models[name]
+                            model.fit(X_train, y_train)
+                            y_pred = model.predict(X_test)
+                            
+                            if problem_type == "Regression":
+                                score = r2_score(y_test, y_pred)
+                                metric = "R2 Score"
+                            else: # Classification
+                                score = accuracy_score(y_test, y_pred)
+                                metric = "Accuracy"
+
+                            if best_model is None or score > best_score:
+                                best_score = score
+                                best_model = model
+                                best_model_name = name
+                            results.append({"Model": name, metric: f"{score:.4f}"})
+
+                        st.session_state.results_df = pd.DataFrame(results)
+                        st.session_state.best_model_obj = best_model
+                        st.session_state.best_model_name = best_model_name
+                        st.session_state.scaler = scaler
+                        st.session_state.training_cols = X.columns.tolist()
+                    
+                    st.success("✅ Training completed successfully!")
+
+                except ValueError as e:
+                    if 'input contains nan' in str(e).lower():
+                        st.error("❌ Can't train directly, looks like your data needs cleaning!")
+                        st.info("Please go to the 'Data Visualization' page and use the 'Missing Value Handler' to fix the empty rows in your dataset.")
+                    else:
+                        st.error(f"An unexpected error occurred during training: {e}")
 
     # Display Results and Download
     if 'results_df' in st.session_state:

@@ -2,36 +2,45 @@ import streamlit as st
 import pandas as pd
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
 st.set_page_config(
     page_title="Stryden.ai Assistant",
     page_icon="💡",
     layout="wide"
 )
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-
-if API_KEY:
-    try:
-        genai.configure(api_key=API_KEY)
-    except Exception as e:
-        st.error(f"Failed to configure API Key: {e}")
-else:
-    st.warning("Give me your API key to get started!")
-
 st.title("💡 Stryden AI - At Your Service")
 st.markdown("Yo! Ask me anything about your data, machine learning concepts, or how to use this tool!")
 
-# Initialize session state for chat history
+# Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
-# Initialize session state for the dataframe
 if 'df' not in st.session_state:
     st.session_state.df = None
+if 'api_key' not in st.session_state:
+    st.session_state.api_key = None
 
-# Prompt Template
+with st.sidebar:
+    st.header("🔑 API Configuration")
+    st.markdown("Enter your API key below. Your key is only used for your session.")
+    
+    api_key_input = st.text_input(
+        "Google Gemini API Key:",
+        type="password",
+        help="Get your key from Google AI Studio. It is not stored after your session ends."
+    )
+    
+    if api_key_input:
+        st.session_state.api_key = api_key_input
+        st.success("API Key entered. You can now chat with Stryden AI.")
+
+if st.session_state.api_key:
+    try:
+        genai.configure(api_key=st.session_state.api_key)
+    except Exception as e:
+        st.error(f"Failed to configure API Key: {e}. Please check if the key is valid.")
+        st.session_state.api_key = None
+
 def create_prompt_template(df):
     """Creates a contextual prompt based on whether a dataset is loaded."""
     if df is not None:
@@ -83,8 +92,8 @@ if prompt := st.chat_input("What would you like to know?"):
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    if not API_KEY or API_KEY == "YOUR_API_KEY_HERE":
-        st.warning("Give me your API key to get started!")
+    if not st.session_state.api_key:
+        st.warning("Please enter your Google Gemini API key in the sidebar to get started!")
         st.stop()
 
     try:
@@ -95,7 +104,12 @@ if prompt := st.chat_input("What would you like to know?"):
             full_prompt = system_prompt + "\n\nUser's question: " + prompt
             
             response = model.generate_content(full_prompt)
-            response_text = response.text
+            
+            try:
+                response_text = response.text
+            
+            except ValueError:
+                response_text = "I'm sorry, I cannot provide a response to that prompt. It may violate safety policies. Please try again."
 
         with st.chat_message("assistant"):
             st.markdown(response_text)
@@ -106,3 +120,6 @@ if prompt := st.chat_input("What would you like to know?"):
         st.error(f"An error occurred: {e}")
         error_message = f"Sorry, I ran into an error: {e}"
         st.session_state.messages.append({"role": "assistant", "content": error_message})
+else:
+    if not st.session_state.api_key:
+        st.info("👋 Welcome! Please add your Gemini API key in the sidebar to activate the assistant.")
