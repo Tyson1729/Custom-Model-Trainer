@@ -100,7 +100,9 @@ else:
             st.success("🎉 No missing values found in the dataset!")
         else:
             st.write("Columns with missing values:")
-            st.table(missing_data[missing_data > 0])
+            missing_df = missing_data[missing_data > 0].reset_index()
+            missing_df.columns = ['Column', 'Total rows']
+            st.table(missing_df)
 
             col_to_fill = st.selectbox("Select a column to handle:", missing_cols)
             
